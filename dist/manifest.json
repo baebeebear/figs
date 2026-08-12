@@ -1,0 +1,15 @@
+{
+  "short_name": "figs",
+  "name": "figs — Kitchen OS",
+  "icons": [
+    {
+      "src": "/figs_logo_fig.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "display": "standalone"
+}

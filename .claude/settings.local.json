@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__f638043a-908c-43fa-a144-0a32620caf47__list_projects",
+      "mcp__f638043a-908c-43fa-a144-0a32620caf47__list_edge_functions",
+      "Bash(find \"/c/Users/Bearr/Downloads/Figs All Files\" -maxdepth 4 -iname \"supabase\" -type d 2>/dev/null)"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+---
+description: Never empty or truncate package.json and other critical project files
+alwaysApply: true
+---
+
+# Protect critical project files
+
+- **Never** overwrite `package.json`, `package-lock.json`, `tsconfig.json`, `tsconfig.*.json`, or `vite.config.*` with empty, truncated, or partial content.
+- Prefer `StrReplace` for small edits. If restoring a wiped file, write the **full** known-good contents in one shot, then verify with `JSON.parse` (for JSON) before continuing.
+- After any write to `package.json`, run: `node -e "JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('ok')"`.
+- Do not empty-out core UI modules (e.g. `FigsGlassOverlay.tsx`) as a “stub”; restore from transcript/backup if found at 0–2 bytes.
+- Run npm only inside the app folder that owns the `package.json` (e.g. `figsRv0.0`), never the monorepo root if it has none.

@@ -16,9 +16,6 @@ workflows:
       app_store_connect: "Codemagic Key"
 
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.figsapp.figs
       vars:
         BUNDLE_ID: "com.figsapp.figs"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
@@ -40,6 +37,17 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           cd ios/App && pod install
+      - name: Initialize keychain for code signing
+        script: |
+          keychain initialize
+      - name: Fetch and generate signing files from Apple
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Apply signing certificates to keychain
+        script: |
+          keychain add-certificates
       - name: Build iOS App for TestFlight
         script: |
           xcode-project build-ipa \

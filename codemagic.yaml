@@ -39,6 +39,9 @@ workflows:
       - name: Sync Capacitor iOS container
         script: |
           npx cap sync ios
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios/App && pod install
       - name: Initialize automatic code signing
         script: |
           app-store-connect fetch-signing-files

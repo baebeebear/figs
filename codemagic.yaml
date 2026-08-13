@@ -15,7 +15,10 @@ workflows:
     integrations:
       app_store_connect: "Codemagic Key"
 
-    environment:
+environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.figsapp.figs
       vars:
         BUNDLE_ID: "com.figsapp.figs"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"

@@ -13,7 +13,7 @@ workflows:
           source: true
 
     integrations:
-      app_store_connect: "Codemagic"
+      app_store_connect: "Codemagic Key"
 
     environment:
       vars:

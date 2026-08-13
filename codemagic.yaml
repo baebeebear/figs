@@ -12,19 +12,14 @@ workflows:
           include: true
           source: true
 
-    # Connect your App Store Connect API key in Codemagic UI
-    # (Team settings → Integrations → Developer Portal) and use its name here.
     integrations:
-      app_store_connect: Codemagic
+      app_store_connect: "Codemagic"
 
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.figsapp.figs
       vars:
-        BUNDLE_ID: com.figsapp.figs
-        XCODE_WORKSPACE: ios/App/App.xcworkspace
-        XCODE_SCHEME: App
+        BUNDLE_ID: "com.figsapp.figs"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
       node: 22
       xcode: latest
       cocoapods: default
@@ -44,7 +39,7 @@ workflows:
           cd ios/App && pod install
       - name: Initialize automatic code signing
         script: |
-          app-store-connect fetch-signing-files
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type AppStore
       - name: Build iOS App for TestFlight
         script: |
           xcode-project build-ipa \
@@ -61,4 +56,4 @@ workflows:
         auth: integration
         submit_to_testflight: true
         beta_groups:
-          - testers # Change this to match your App Store Connect TestFlight group name
+          - testers

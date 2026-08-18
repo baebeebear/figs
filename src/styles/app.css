@@ -12,6 +12,9 @@
 html {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  touch-action: manipulation;
 }
 html::-webkit-scrollbar {
   display: none;
@@ -43,6 +46,7 @@ body {
   padding: 0;
   overflow: hidden; /* Prevents elastic scrolling globally */
   background: var(--bg-canvas-pure);
+  overscroll-behavior: none;
 }
 
 body {
@@ -86,6 +90,17 @@ body {
   /* Right inset for figs plus — keep tiny so the FAB sits at the screen edge. */
   --figs-fab-right: 0.2rem;
   --figs-tab-bar-total: calc(var(--figs-tab-bar-core) + var(--figs-tab-bar-safe));
+}
+
+html.is-native .figs-phone-shell,
+html.is-native .auth-phone-shell {
+  max-width: none;
+}
+
+html.is-native,
+html.is-native body {
+  touch-action: pan-y;
+  overscroll-behavior: none;
 }
 
 .figs-app-viewport {

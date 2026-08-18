@@ -2,6 +2,7 @@ import type { FormEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AlertCircle, CheckCircle2, ChevronLeft, Eye, EyeOff, Loader2, Plus } from 'lucide-react'
 import type { AuthActionError } from '../hooks/useAuth'
+import { signInWithApple as nativeAppleSignIn, signInWithGoogle as nativeGoogleSignIn } from '../lib/nativeSocialAuth'
 import { supabase } from '../services/supabase'
 
 type AuthPageProps = {
@@ -51,8 +52,6 @@ export default function Auth({ signIn, signUp }: AuthPageProps) {
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
 
-  const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/` : undefined
-
   const navigate = (path: string) => {
     try {
       window.history.pushState({}, '', path)
@@ -70,32 +69,28 @@ export default function Auth({ signIn, signUp }: AuthPageProps) {
 
   const signInWithGoogle = async () => {
     setError('')
-    if (!supabase) {
-      setError('Supabase is not configured.')
-      return
-    }
     setOauthBusy('google')
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo },
-    })
-    setOauthBusy(null)
-    if (oauthError) setError(oauthError.message)
+    try {
+      const { error: oauthError } = await nativeGoogleSignIn()
+      if (oauthError) setError(oauthError.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google Sign-In failed')
+    } finally {
+      setOauthBusy(null)
+    }
   }
 
   const signInWithApple = async () => {
     setError('')
-    if (!supabase) {
-      setError('Supabase is not configured.')
-      return
-    }
     setOauthBusy('apple')
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: { redirectTo },
-    })
-    setOauthBusy(null)
-    if (oauthError) setError(oauthError.message)
+    try {
+      const { error: oauthError } = await nativeAppleSignIn()
+      if (oauthError) setError(oauthError.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Apple Sign-In failed')
+    } finally {
+      setOauthBusy(null)
+    }
   }
 
   const onWelcomeContinue = () => {
@@ -250,8 +245,31 @@ export default function Auth({ signIn, signUp }: AuthPageProps) {
   }, [photoPreview])
 
   const oauthDisabled = oauthBusy !== null || busy
+  const oauthButtons = (
+    <>
+      <button
+        type="button"
+        onClick={() => void signInWithGoogle()}
+        disabled={oauthDisabled}
+        className="flex h-[54px] w-full shrink-0 items-center justify-center gap-[11px] rounded-[15px] border border-[#e6e2db] bg-white font-ui text-[15px] font-semibold text-[#1c1c1e] shadow-[0_1px_2px_rgba(20,10,40,0.04)] disabled:opacity-60"
+      >
+        <GoogleMark />
+        {oauthBusy === 'google' ? 'Signing in…' : 'Continue with Google'}
+      </button>
+      <div className="h-3 shrink-0" />
+      <button
+        type="button"
+        onClick={() => void signInWithApple()}
+        disabled={oauthDisabled}
+        className="flex h-[54px] w-full shrink-0 items-center justify-center gap-2.5 rounded-[15px] border-0 bg-[#1c1c1e] font-ui text-[15px] font-semibold text-white disabled:opacity-60"
+      >
+        <AppleMark className="text-white" />
+        {oauthBusy === 'apple' ? 'Signing in…' : 'Continue with Apple'}
+      </button>
+    </>
+  )
   const fieldClass =
-    'auth-field w-full h-[54px] px-[18px] rounded-[15px] border border-[#e6e2db] bg-white font-ui text-[15px] text-[#1c1c1e] outline-none placeholder:text-[#a29ba8]'
+    'auth-field w-full h-[54px] px-[18px] rounded-[15px] border border-[#e6e2db] bg-white font-ui text-[16px] text-[#1c1c1e] outline-none placeholder:text-[#a29ba8]'
   const primaryBtn =
     'flex h-[54px] w-full items-center justify-center rounded-[15px] border-0 bg-[#1a0d40] font-ui text-[15px] font-semibold text-white shadow-[0_10px_24px_-12px_rgba(26,13,64,0.7)] transition-colors hover:bg-[#2a1a5a] disabled:cursor-not-allowed disabled:opacity-60'
   const backBtn =
@@ -280,25 +298,7 @@ export default function Auth({ signIn, signUp }: AuthPageProps) {
 
             <div className="h-[clamp(16px,3vh,40px)] shrink-0" />
 
-            <button
-              type="button"
-              onClick={() => void signInWithGoogle()}
-              disabled={oauthDisabled}
-              className="flex h-[54px] w-full shrink-0 items-center justify-center gap-[11px] rounded-[15px] border border-[#e6e2db] bg-white font-ui text-[15px] font-semibold text-[#1c1c1e] shadow-[0_1px_2px_rgba(20,10,40,0.04)] disabled:opacity-60"
-            >
-              <GoogleMark />
-              {oauthBusy === 'google' ? 'Redirecting…' : 'Continue with Google'}
-            </button>
-            <div className="h-3 shrink-0" />
-            <button
-              type="button"
-              onClick={() => void signInWithApple()}
-              disabled={oauthDisabled}
-              className="flex h-[54px] w-full shrink-0 items-center justify-center gap-2.5 rounded-[15px] border-0 bg-[#1c1c1e] font-ui text-[15px] font-semibold text-white disabled:opacity-60"
-            >
-              <AppleMark className="text-white" />
-              {oauthBusy === 'apple' ? 'Redirecting…' : 'Continue with Apple'}
-            </button>
+            {oauthButtons}
 
             <div className="my-5 flex shrink-0 items-center gap-3.5">
               <div className="h-px flex-1 bg-[#e9e5de]" />
@@ -366,7 +366,13 @@ export default function Auth({ signIn, signUp }: AuthPageProps) {
               Welcome back
             </h1>
             <p className="m-0 mt-2 font-ui text-[14px] text-[#8b8794]">Enter your password to continue.</p>
-            <div className="h-10 shrink-0" />
+            <div className="h-8 shrink-0" />
+            {oauthButtons}
+            <div className="my-5 flex shrink-0 items-center gap-3.5">
+              <div className="h-px flex-1 bg-[#e9e5de]" />
+              <span className="font-ui text-[13px] text-[#a29ba8]">or</span>
+              <div className="h-px flex-1 bg-[#e9e5de]" />
+            </div>
 
             <form className="flex min-h-0 flex-1 flex-col" onSubmit={(e) => void onLogin(e)}>
               <label className="font-ui text-[13px] font-semibold text-[#6e6c78]">Username</label>

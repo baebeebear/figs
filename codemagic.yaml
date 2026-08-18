@@ -23,8 +23,14 @@ workflows:
         BUNDLE_ID: "com.figsapp.figs"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
-        NEXT_PUBLIC_SUPABASE_URL: "https://your-project-id.supabase.co"
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-supabase-anon-key-here"
+
+        NEXT_PUBLIC_SUPABASE_URL: "https://xcvqfsqrnwljlohugsdm.supabase.co"
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdnFmc3FybndsamxvaHVnc2RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMTU1MDksImV4cCI6MjA5MzU5MTUwOX0.y0tVSzTZLRgFUZQWLKLU1o6BgLzza2OpJ6dYSx_Ih3c"
+        VITE_SUPABASE_URL: "https://xcvqfsqrnwljlohugsdm.supabase.co"
+        VITE_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjdnFmc3FybndsamxvaHVnc2RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMTU1MDksImV4cCI6MjA5MzU5MTUwOX0.y0tVSzTZLRgFUZQWLKLU1o6BgLzza2OpJ6dYSx_Ih3c"
+        
+        VITE_GOOGLE_WEB_CLIENT_ID: "327999147197-0ub120p3a2galvma9etnc2iurga3fl8d.apps.googleusercontent.com"
+        NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID: "327999147197-0ub120p3a2galvma9etnc2iurga3fl8d.apps.googleusercontent.com"
       node: 22
       xcode: latest
       cocoapods: default

@@ -23,6 +23,8 @@ workflows:
         BUNDLE_ID: "com.figsapp.figs"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
+        NEXT_PUBLIC_SUPABASE_URL: "https://your-project-id.supabase.co"
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-supabase-anon-key-here"
       node: 22
       xcode: latest
       cocoapods: default
@@ -40,6 +42,10 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           cd ios/App && pod install
+      - name: Increment build number
+        script: |
+          cd ios/App
+          agvtool new-version -all $(($BUILD_NUMBER + 1))
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
@@ -58,5 +64,3 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-        beta_groups:
-          - testers

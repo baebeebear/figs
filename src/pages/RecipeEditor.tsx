@@ -4,6 +4,7 @@ import { supabase } from '../services/supabase'
 import { insertRecipe, recipeCreatorLabel, updateRecipe, type RecipeShelfOrigin } from '../lib/recipes'
 import { upsertCustomization } from '../lib/recipeCustomizations'
 import { uploadRecipeImage } from '../lib/recipeImageStorage'
+import { pickPhotoNativeOrFallback } from '../lib/nativeCamera'
 import { generateAndUploadRecipeHeroImage } from '../lib/recipeImageGeneration'
 import { generateRecipeFromPrompt } from '../lib/gemini'
 import { estimateRecipeTimes } from '../lib/recipeTimeEstimate'
@@ -761,7 +762,10 @@ export default function RecipeEditor({
 
   const handleAddImageClick = () => {
     if (!activeStepId) return
-    stepImageInputRef.current?.click()
+    void (async () => {
+      const file = await pickPhotoNativeOrFallback(() => stepImageInputRef.current?.click())
+      if (file) void handleStepImageFile(file)
+    })()
   }
   const handleStepImageFile = async (file: File | undefined) => {
     if (!file || !supabase || !activeStepId) return
@@ -899,7 +903,12 @@ export default function RecipeEditor({
         ) : null}
         <button
           type="button"
-          onClick={() => heroFileInputRef.current?.click()}
+          onClick={() => {
+            void (async () => {
+              const file = await pickPhotoNativeOrFallback(() => heroFileInputRef.current?.click())
+              if (file) void handleHeroFile(file)
+            })()
+          }}
           disabled={heroUploading}
           className="absolute inset-0 z-[1] flex flex-col items-center justify-center gap-2 border-0 bg-transparent text-white disabled:opacity-70"
         >
@@ -935,7 +944,12 @@ export default function RecipeEditor({
         >
           <button
             type="button"
-            onClick={() => heroFileInputRef.current?.click()}
+            onClick={() => {
+              void (async () => {
+                const file = await pickPhotoNativeOrFallback(() => heroFileInputRef.current?.click())
+                if (file) void handleHeroFile(file)
+              })()
+            }}
             aria-label="Replace photo"
             className="flex h-9 w-9 items-center justify-center border-0 bg-transparent p-0 text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.45)] transition active:opacity-70"
           >

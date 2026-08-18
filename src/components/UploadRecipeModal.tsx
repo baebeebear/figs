@@ -3,6 +3,7 @@ import { Camera, FileText, Link2 } from 'lucide-react'
 import ModalSheet from './ModalSheet'
 import { supabase } from '../services/supabase'
 import { startRecipeImportJob } from '../lib/recipeIntake'
+import { isCameraCanceled, pickNativePhotos } from '../lib/nativeCamera'
 
 type Props = {
   userId: string
@@ -152,7 +153,21 @@ export default function UploadRecipeModal({ userId, onClose, onImportStarted }: 
           <button
             type="button"
             disabled={busy}
-            onClick={() => photoInputRef.current?.click()}
+            onClick={() => {
+              void (async () => {
+                try {
+                  const files = await pickNativePhotos(8)
+                  if (files) {
+                    if (files.length) void submitPhotos(files)
+                    return
+                  }
+                  photoInputRef.current?.click()
+                } catch (e) {
+                  if (isCameraCanceled(e)) return
+                  setError(e instanceof Error ? e.message : 'Could not open camera or photos.')
+                }
+              })()
+            }}
             className="flex flex-col items-center gap-2.5 rounded-[18px] border border-[#ECE9E3] bg-[#FAF9FC] px-4 py-6 transition hover:border-[#4C6A57]/30 hover:bg-[#4C6A57]/[0.05] active:scale-[0.98] disabled:opacity-60"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4C6A57]/10 text-[#4C6A57]">

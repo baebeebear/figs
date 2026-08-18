@@ -63,7 +63,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>GIDClientID</key>
-	<string>327999147197-0ub120p3a2galvma9etnc2iurga3fl8d.apps.googleusercontent.com</string>
+	<string>327999147197-ai965qlnu43o135l89cns5ote3tig40t.apps.googleusercontent.com</string>
 	<key>GIDServerClientID</key>
 	<string>327999147197-0ub120p3a2galvma9etnc2iurga3fl8d.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
@@ -71,10 +71,16 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.327999147197-0ub120p3a2galvma9etnc2iurga3fl8d</string>
+				<string>com.googleusercontent.apps.327999147197-ai965qlnu43o135l89cns5ote3tig40t</string>
 			</array>
 		</dict>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera to take photos of items and receipts.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to select photos to upload.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save captured photos to your photo library.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 </dict>

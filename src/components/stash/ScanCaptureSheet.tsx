@@ -20,6 +20,7 @@ import type { NewStashItemInput } from '../../lib/stash'
 import ReceiptReviewPage, { type ReviewLine, type ReceiptGroupMeta } from './ReceiptReviewPage'
 import { useWakeLock } from '../../hooks/useWakeLock'
 import { clearScrapeJob, createScrapeJobId, updateScrapeJob, writeScrapeJob } from '../../lib/scrapeJobStorage'
+import { ensureNativeCameraPermissions, isCameraCanceled, pickNativePhotos } from '../../lib/nativeCamera'
 
 type Props = {
   userId: string
@@ -207,6 +208,11 @@ export default function ScanCaptureSheet({ userId, onClose, onAddItems, onAdded,
     setCameraState('starting')
     void (async () => {
       try {
+        const allowed = await ensureNativeCameraPermissions(['camera'])
+        if (!allowed) {
+          if (!cancelled) setCameraState('denied')
+          return
+        }
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false,
@@ -779,7 +785,21 @@ export default function ScanCaptureSheet({ userId, onClose, onAddItems, onAdded,
         <div className="absolute inset-x-0 bottom-0 z-[2] flex items-center justify-between gap-4 px-6 pb-[max(1.75rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              void (async () => {
+                try {
+                  const files = await pickNativePhotos(8)
+                  if (files) {
+                    if (files.length) void handleFiles(files)
+                    return
+                  }
+                  fileInputRef.current?.click()
+                } catch (e) {
+                  if (isCameraCanceled(e)) return
+                  setError(e instanceof Error ? e.message : 'Could not open photos.')
+                }
+              })()
+            }}
             aria-label="Choose photos"
             className="flex h-11 w-11 shrink-0 items-center justify-center border-0 bg-transparent text-white"
           >

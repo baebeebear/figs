@@ -6,6 +6,7 @@ import { assignRecipeToCookbook, createCookbook, unassignRecipeFromCookbook, upd
 import { cookbookHeroGradient, DEFAULT_COOKBOOK_THEME, extractDominantColorFromImage } from '../lib/coverTheme'
 import type { RecipeRow } from '../lib/recipes'
 import { uploadCookbookCoverImage } from '../lib/recipeImageStorage'
+import { pickPhotoNativeOrFallback } from '../lib/nativeCamera'
 import { supabase } from '../services/supabase'
 
 type Props = {
@@ -198,7 +199,12 @@ export default function CookbookCreatePage({
           <div className="relative flex flex-col items-center px-6 pt-2 text-center">
             <button
               type="button"
-              onClick={() => coverFileInputRef.current?.click()}
+              onClick={() => {
+                void (async () => {
+                  const file = await pickPhotoNativeOrFallback(() => coverFileInputRef.current?.click())
+                  if (file) void handleCoverFile(file)
+                })()
+              }}
               disabled={coverUploading}
               className="relative flex w-[148px] shrink-0 items-center justify-center overflow-hidden rounded-[8px] border-0 text-white shadow-[0_22px_44px_-14px_rgba(0,0,0,0.6)]"
               style={{ aspectRatio: '3 / 4.4', background: heroMid }}
